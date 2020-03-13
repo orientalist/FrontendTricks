@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>60 sec's</title>
+    <link rel="stylesheet" href="css/reset.css">
+    <link href='https://fonts.googleapis.com/css?family=Roboto Condensed' rel='stylesheet'>
+    <link rel="stylesheet" href="css/60Sec.css">
+</head>
+
+<body>
+    <div class="game_box start">
+        <div class="title">
+            <h1>60</h1>
+            <div>
+                <div class="title_word">
+                    <div>
+                        SECONDS
+                    </div>
+                    <div class="operator">
+                        +−×÷
+                        <hr>
+                        <hr>
+                    </div>
+                    <div class="clear_fix"></div>
+                </div>
+                <div class="title_word">CHALLENGE</div>
+            </div>
+        </div>
+        <div class="start_btn">
+            <a id='a_start' href="#">START!</a>
+            <p>try to answer more as you can</p>
+        </div>
+    </div>
+
+    <div class="game_box main">
+        <div id='score'>
+            <h2>60 SECONDS CHALLENGE</h2>
+            <div>
+                <div>SCORE</div>
+                <div id='lastest_score'>000</div>
+            </div>
+        </div>
+        <div id="time">
+            00:<span id='second'>60</span>
+        </div>
+        <div id="question">
+            <div id="arithmetic">
+                <div class="num" id="num1"></div>
+                <div class="operators" id="operator"></div>
+                <div class="num" id="num2"></div>
+                <div class="operators">=</div>
+            </div>
+            <div id='div_answer'>
+                <input type="text" name="answer" id="answer">
+                <p>press enter to answer</p>
+            </div>
+        </div>
+    </div>
+    <div class="game_box restart">
+        <span>60 SECONDS CHALLENGE</span>
+        <div id='final_score'>
+            <p>
+                <span class="dash">— </span>
+                YOUR FINAL SCORE
+                <span class="dash"> —</span>
+            </p>
+            <h1 id='total_score'>
+                
+            </h1>
+        </div>
+        <a href="#" id='btn_restart'>
+            TRY AGAIN!
+        </a>
+    </div>
+</body>
+<script>
+    window.game_center = new GameCenter();
+
+    function GameCenter() {
+        this.Score = 0;
+        this.Seconds = 60;
+        this.Answers = [];
+        this.Operators = ['+', '-', '×', '÷'];
+    }
+
+    GameCenter.prototype.Start = function () {
+        this.GenerateProblem();
+        this.Tick();
+    }
+
+    GameCenter.prototype.Tick=function(){
+        setTimeout(() => {
+            this.Seconds -= 1;
+            if(this.Seconds>0){
+                document.getElementById('second').innerText=this.Seconds.toString().length==1?`0${this.Seconds}`:this.Seconds;
+                this.Tick();
+            }else{
+                document.getElementById('total_score').innerText=this.Score;
+                document.getElementsByClassName('main')[0].style.display = 'none';
+                document.getElementsByClassName('restart')[0].style.display = 'block';
+            }
+        }, 1000);
+    }
+
+    GameCenter.prototype.GenerateNumber=function(digits,callback,notZero=false){
+        let num=0;
+
+        num=Math.floor(Math.random()*Math.pow(10,digits));
+
+        if(num===0&&notZero){
+            this.GenerateNumber(digits,callback,notZero);
+        }else{
+            callback(num);
+        }
+    };
+
+    GameCenter.prototype.GenerateProblem = function () {
+        let num1;
+        let num2;
+        let operator = this.Operators[Math.floor(Math.random() *3) + 1];
+        let answer = 0;
+
+        let digit=1;
+        if (this.Seconds >= 41 && this.Seconds <= 60) {
+            //一位數運算
+            this.GenerateNumber(digit,num=>num1=num);
+            this.GenerateNumber(digit,num=>num2=num);
+            num1 === 0 ? 1 : num1;
+            num2 === 0 ? 1 : num2;
+        }
+        else if (this.Seconds >= 21 && this.Seconds <= 40) {
+            //二位數運算
+            digit=2;
+            this.GenerateNumber(digit,num=>num1=num);
+            this.GenerateNumber(digit,num=>num2=num);
+            num1 === 0 ? 10: num1;
+            num2 === 0 ? 10 : num2;
+        } else if (this.Seconds > 0 && this.Seconds <= 20) {
+            //三位數運算
+            digit=3;
+            this.GenerateNumber(digit,num=>num1=num);
+            this.GenerateNumber(digit,num=>num2=num);
+            num1 === 0 ? 100: num1;
+            num2 === 0 ? 100 : num2;
+        }
+
+        switch (operator) {
+            case '+':
+                answer = num1 + num2;
+                break;
+            case '-':
+                answer = num1 - num2; 
+                break;
+            case '×':
+                answer = num1 * num2;
+                 break;
+            case '÷':
+            num2=0;
+                if(num2===0){
+                    this.GenerateNumber(digit,num=>num2=num,true);
+                }
+                answer =Math.floor(num1/num2); 
+                break;
+        }
+        this.Answers.push(answer);
+        document.getElementById('num1').innerText=num1;
+        document.getElementById('num2').innerText=num2;
+        document.getElementById('operator').innerText=operator;
+    }
+
+    GameCenter.prototype.Reset = function () {
+        this.Score = 0;
+        this.Seconds = 60;
+        this.Answers = [];
+        document.getElementById('lastest_score').innerText=this.Score;
+        document.getElementById('second').innerText=this.Seconds;
+        document.getElementById('answer').value='';
+    }
+
+    GameCenter.prototype.InsertAnswer=function(val){
+        if(parseInt(val)===this.Answers[this.Answers.length-1]){
+            
+            if(this.Seconds<=60&&this.Seconds>=20){
+                this.Score+=1;
+            }else{
+                this.Score+=5;
+            }
+        }else{
+            if(this.Score>=1){
+                this.Score-=1;
+            }
+        }
+        document.getElementById('lastest_score').innerText=('000'+this.Score).substr(-3);
+        this.GenerateProblem();
+    }
+
+    document.getElementById('a_start').addEventListener('click', function (e) {
+        e.preventDefault();
+        document.getElementsByClassName('start')[0].style.display = 'none';
+        document.getElementsByClassName('main')[0].style.display = 'block';
+
+        window.game_center.Start();
+    })
+
+    document.getElementById('answer').addEventListener('keyup',function(e){
+        if(e.keyCode===13){
+            window.game_center.InsertAnswer(this.value);
+            this.value='';
+        }
+    });
+
+    document.getElementById('btn_restart').addEventListener('click',function(e){
+        e.preventDefault();
+        window.game_center.Reset();
+        document.getElementsByClassName('restart')[0].style.display = 'none';
+        document.getElementsByClassName('start')[0].style.display = 'block';
+    });
+</script>
+
+</html>

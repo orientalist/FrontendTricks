@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Time Zone</title>
+    <link rel="stylesheet" href="css/reset.css">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #E5E5E5;
+            padding-top: 50px;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .wrap {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .wrap>h1 {
+            display: inline-block;
+            font-size: 72px;
+            font-weight: bold;
+            line-height: 98px;
+            border-top: 10px solid black;
+            border-bottom: 10px solid black;
+            margin-bottom: 30px;
+        }
+
+        .wrap>table {
+            margin: auto;
+        }
+
+        .wrap>table tr {
+            border: 2px solid black;
+
+        }
+
+        .wrap table tr>td {
+            padding: 1rem 2.5rem 1rem 2.5rem;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        .city {
+            font-size: 36px;
+            margin-bottom: 8px;
+        }
+
+        .date {
+            font-size: 16px;
+        }
+
+        .time {
+            font-size: 72px;
+            letter-spacing: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <h1>WORLD CLOCK</h1>
+        <table>
+            <tr id='tr_TAIPEI'>
+                <td>
+                    <p class="city">TAIPEI</p>
+                    <p class="date" id='date_TAIPEI'>28 JAN.2019</p>
+                </td>
+                <td>
+                    <p class="time" id='time_TAIPEI'>02:46.00</p>
+                </td>
+            </tr>
+            <tr id='tr_NEWYORK'>
+                <td>
+                    <p class="city">NEW YORK</p>
+                    <p class="date" id='date_NEWYORK'>28 JAN.2019</p>
+                </td>
+                <td>
+                    <p class="time" id='time_NEWYORK'>02:46.00</p>
+                </td>
+            </tr>
+            <tr id='tr_LONDON'>
+                <td>
+                    <p class="city">LONDON</p>
+                    <p class="date" id='date_LONDON'>28 JAN.2019</p>
+                </td>
+                <td>
+                    <p class="time" id='time_LONDON'>02:46.00</p>
+                </td>
+            </tr>
+            <tr id='tr_BANGKOK'>
+                <td>
+                    <p class="city">BANGKOK</p>
+                    <p class="date" id='date_BANGKOK'>28 JAN.2019</p>
+                </td>
+                <td>
+                    <p class="time" id='time_BANGKOK'>02:46.00</p>
+                </td>
+            </tr>
+            <tr id='tr_SYDNEY'>
+                <td>
+                    <p class="city">SYDNEY</p>
+                    <p class="date" id='date_SYDNEY'>28 JAN.2019</p>
+                </td>
+                <td>
+                    <p class="time" id='time_SYDNEY'>02:46.00</p>
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+<script>
+    window.now_date=new Date();
+    window.months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+    window.time_zone=[
+        {city:'TAIPEI',utc:8,time:null},
+        {city:'NEWYORK',utc:-5,time:null},
+        {city:'LONDON',utc:0,time:null},
+        {city:'BANGKOK',utc:7,time:null},
+        {city:'SYDNEY',utc:11,time:null}
+    ];
+    
+    //取得格林威治標準時間
+    window.greenwich_mean_time=(window.now_date.getTime()+window.now_date.getTimezoneOffset()*60000);
+
+    window.time_zone.forEach(z=>{
+        z.time=greenwich_mean_time+3600000*z.utc;
+    });
+
+    fnTick();
+    function fnTick(){
+        setTimeout(()=>{
+            window.time_zone.forEach(t=>{
+                t.time+=1000;
+                let new_time=new Date(t.time);
+
+                let hour=new_time.getHours();
+                
+                if((hour>=18&&hour<=23)||(hour>=0&&hour<=5)){
+                    document.getElementById(`tr_${t.city}`).style.color='white';
+                    document.getElementById(`tr_${t.city}`).style.backgroundColor='black';
+                }else{
+                    document.getElementById(`tr_${t.city}`).style.color='black';
+                    document.getElementById(`tr_${t.city}`).style.backgroundColor='white';
+                }
+
+                hour=hour.toString().length===1?`0${hour}`:hour;
+
+                let minutes=new_time.getMinutes().toString();
+                minutes=minutes.length===1?`0${minutes}`:minutes;
+
+                let second=new_time.getSeconds().toString();
+                second=second.length===1?`0${second}`:second;
+
+                document.getElementById(`time_${t.city}`).innerText=`${hour}:${minutes}.${second}`;
+
+                let year=new_time.getFullYear();
+                let date=new_time.getDate();
+                let month=window.months[new_time.getMonth()];
+                
+                document.getElementById(`date_${t.city}`).innerText=`${date} ${month}. ${year}`;
+            });
+            fnTick();
+        },1000);        
+    }
+</script>
+</html>

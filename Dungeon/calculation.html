@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Calculation</title>
+    <link rel="stylesheet" href="css/reset.css">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        .wrap {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #E8E8E8;
+        }
+
+        #calculater {
+            width: 350px;
+            height: 525px;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        #header {
+            height: 109px;
+            padding: 16px;
+            text-align: right;
+            background-color: #041936;
+        }
+
+        #header #flow {
+            color: #00C4FF;
+        }
+
+        #header #num {
+            font-size: 56px;
+            color: white;
+        }
+
+        #keyboard {
+            background-color: #062145;
+            color: white;
+            padding: 16px 8px 16px 8px;
+            height: 416px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+
+        #keyboard .button {
+            width: 72px;
+            height: 64px;
+            border-radius: 16px;
+            text-align: center;
+            font-size: 24px;
+            line-height: 64px;
+        }
+
+        #keyboard .button:nth-last-of-type(4n) {
+            background-color: #041936;
+        }
+
+        #keyboard .button:hover {
+            background-color: #00C4FF;
+        }
+
+        #equal {
+            text-align: right !important;
+            padding-right: 32px;
+            flex-basis: 155px;
+            background: transparent linear-gradient(90deg, #00C4FF 0%, #6C00FF 100%) 0% 0% no-repeat padding-box;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <div id="calculater">
+            <div id="header">
+                <div id="flow"></div>
+                <div id="num">0</div>
+            </div>
+            <div id="keyboard">
+                <div class="button">7</div>
+                <div class="button">8</div>
+                <div class="button">9</div>
+                <div class="button operator">/</div>
+                <div class="button">4</div>
+                <div class="button">5</div>
+                <div class="button">6</div>
+                <div class="button operator">x</div>
+                <div class="button">1</div>
+                <div class="button">2</div>
+                <div class="button">3</div>
+                <div class="button operator">+</div>
+                <div class="button">0</div>
+                <div class="button">00</div>
+                <div class="button">.</div>
+                <div class="button operator">-</div>
+                <div class="button">AC</div>
+                <div class="button">⌫</div>
+                <div class="button" id="equal">=</div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    //運算子
+    let operators = ['+', '-', 'x', '/', '='];
+    //總運算式
+    let all_arithmetic = '';
+    //當前運算式
+    let current_arithmetic = '0';
+    //按鈕綁定點擊事件
+    let btns = document.getElementsByClassName('button');
+    for (let i = 0; i < btns.length; i++) {
+        btns[i].addEventListener('click', function (e) {
+            //判斷當前按鈕類別
+            let btn_value = this.innerText;
+            switch (btn_value) {
+                case 'AC':
+                    //重置事件
+                    all_arithmetic = '';
+                    current_arithmetic = '0';
+                    break;
+                case '⌫':
+                    //刪除當前運算式尾部事件
+                    current_arithmetic = current_arithmetic.replace(/.$/, '');
+                    break;
+                default:
+                    //加入數字/運算子事件
+                    current_arithmetic += btn_value;
+                    break;
+            }
+
+            RefreshArithmetic();
+        });
+    }
+
+    //更新運算式與當前運算式
+    function RefreshArithmetic() {
+        //判斷是否為運算子
+        if (operators.includes(current_arithmetic.slice(-1))) {
+            //若運算元非數字,試同0,其他則轉為float
+            current_arithmetic = `${isNaN(current_arithmetic.substring(0, current_arithmetic.length - 1)) || current_arithmetic.substring(0, current_arithmetic.length - 1) === 'Infinity' ? '0' : parseFloat(current_arithmetic.substring(0, current_arithmetic.length - 1))}${current_arithmetic.slice(-1)}`;
+            //將運算式併入總運算式
+            all_arithmetic += current_arithmetic;
+            //判斷是否為=,非則將當前運算式歸0
+            if (current_arithmetic.slice(-1) !== '=') {
+                current_arithmetic = '0';
+            }
+            else {
+                //進行=號運算
+                //取出總運算式
+                all_arithmetic = all_arithmetic.substring(0, all_arithmetic.length - 1);
+                //分割出運算元陣列
+                let num_arr = all_arithmetic.split(/\+|\-|\x|\/|\=/);
+                //分割出運算子陣列
+                let operator_arr = all_arithmetic.replace(/\d+(\.\d+)?/g, '#').split('#');
+                operator_arr.pop();
+                operator_arr.shift();
+                let priority_arr = [];
+
+                //製造x,/位置陣列,用於優先執行運算
+                for (let i = 0; i < operator_arr.length; i++) {
+                    if (operator_arr[i] === 'x' || operator_arr[i] === '/') {
+                        priority_arr.push(i);
+                    }
+                }
+
+                //若有x,/則優先運算
+                if (priority_arr.length > 0) {
+                    priority_arr.forEach(p => {
+                        let n_l = parseFloat(num_arr[p]);
+                        let n_r = parseFloat(num_arr[p + 1]);
+                        //將運算結果置入運算元陣列,以處理的運算元以#代替
+                        switch (operator_arr[p]) {
+                            case 'x':
+                                num_arr.splice(p, 2, '#', n_l * n_r);
+                                break;
+                            case '/':
+                                num_arr.splice(p, 2, '#', n_l / n_r);
+                                break;
+                        }
+                    });
+                }
+                //剔除運算元陣列中的#
+                num_arr = num_arr.filter(n => {
+                    return n !== '#';
+                });
+                //剔除x,/運算子
+                operator_arr = operator_arr.filter(o => {
+                    return o !== 'x' && o !== '/';
+                });
+                //進行+,-運算
+                Calculate(operator_arr, num_arr, function (result) {
+                    current_arithmetic = result.toString();
+                    all_arithmetic = '';
+                });
+            }
+        } else {
+            //非運算子,判斷是否包含小數點,則轉為數字後轉為字串
+            //含小數點不轉換,否則永遠無法使用小數點
+            if (current_arithmetic.split('.').length !== 2) {
+                current_arithmetic = parseFloat(current_arithmetic).toString();
+            }
+        }
+        current_arithmetic=isNaN(current_arithmetic)?'0':current_arithmetic;
+        document.getElementById('flow').innerText = all_arithmetic;
+        document.getElementById('num').innerText =current_arithmetic;
+    }
+
+    //+,-運算
+    function Calculate(op_arr, num_arr, callback) {
+        if (num_arr.length > 1) {
+            let n_l = parseFloat(num_arr[0]);
+            let n_r = parseFloat(num_arr[1]);
+            switch (op_arr[0]) {
+                case '+':
+                    num_arr.splice(0, 2, n_l + n_r);
+                    break;
+                case '-':
+                    num_arr.splice(0, 2, n_l - n_r);
+            }
+            op_arr.shift();
+            Calculate(op_arr, num_arr, callback);
+        } else {
+            callback(num_arr[0]);
+        }
+    }
+</script>
+
+</html>

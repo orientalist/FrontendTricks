@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>AQI</title>
+    <link rel="stylesheet" href="css/reset.css">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #E5E5E5;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        sub {
+            font-size: smaller;
+        }
+
+        .wrap {
+            padding: 3rem 3rem 5rem 5rem;
+            position: relative;
+        }
+
+        .header {
+            display: flex;
+            flex-flow: row;
+        }
+
+        .header h1 {
+            font-size: 40px;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .title_country>select {
+            width: 100%;
+            height: 3rem;
+            font-size: 1rem;
+        }
+
+        .standard {
+            margin-left: 3rem;
+            flex-grow: 2;
+        }
+
+        .chemistry {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .chemistry:nth-child(3) {
+            float: right;
+        }
+
+        .standard>table {
+            width: 100%;
+        }
+
+        .standard>table td {
+            width: 16%;
+            border: 3px solid black;
+            text-align: center;
+            padding: 0px 5px 0px 5px;
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+
+        td,th,.list div:nth-child(odd){
+            background-color: white;
+        }
+
+        .county_info {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            padding-top: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .county_info>hr {
+            flex-grow: 1;
+            border-top: 2px dotted black;
+            margin-left: 1rem;
+            margin-right: 1rem;
+        }
+
+        .county_info>h1 {
+            font-size: 40px;
+            font-weight: bold;
+        }
+
+        .content,
+        .list {
+            display: flex;
+        }
+
+        .content #SiteName{
+            min-width: 253px;
+        }
+
+        .content #AQI{
+            min-width: 230px;
+        }
+
+        .content .seperator>td {
+            padding: 0px 3rem 0px 3rem !important;
+        }
+
+        .content>.detail>table {
+            border: 3px solid black;
+        }
+
+        .content>.detail>table tr:nth-child(2)>td {
+            padding-top: 2.5rem;
+        }
+
+        .content>.detail>table tr:last-child>td {
+            padding-bottom: 2.5rem;
+        }
+
+        .content>.detail>table th {
+            border-left: 3px solid black;
+            border-bottom: 3px solid black;
+            text-align: center;
+            vertical-align: middle;
+            font-size: 36px;
+            font-weight: bold;
+            padding: 2rem 0rem 2rem 0rem;
+        }
+
+        .content>.detail>table td {
+            padding: 1.5rem 3rem 1.5rem 3rem;
+        }
+
+        .content>.detail>table td:nth-child(2) {
+            text-align: right;
+        }
+
+        .content>.list {
+            padding-left: 1rem;
+            flex-direction: row;
+            flex-wrap: wrap;
+            align-content: flex-start;
+        }
+
+        .content>.list>a {
+            text-decoration: none;
+            margin-right: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .content>.list>a>div {
+            font-size: 36px;
+            color: black;
+            font-weight: bold;
+            float: left;
+            border-top: 3px solid black;
+            border-bottom: 3px solid black;
+            border: 3px 0px 3px 0px;
+            padding: 2rem 0rem 2rem 0rem;
+            min-width: 192px;
+            text-align: center;
+        }
+
+        .content>.list>a>div:nth-child(odd) {
+            border-left: 3px solid black;
+            border-right: 1.5px solid black;
+        }
+
+        .content>.list>a>div:nth-child(even) {
+            border-left: 1.5px solid black;
+            border-right: 3px solid black;
+        }
+
+        .footer {
+            position: absolute;
+            ;
+            width: 100vw;
+            bottom: 0;
+            left: 0;
+            background-color: black;
+            color: white;
+            line-height: 2rem;
+            padding-left: 3rem;
+            padding-right: 3rem;
+        }
+
+        .footer>span:nth-child(2) {
+            float: right;
+        }
+
+        .well{
+            background-color: #95F084;
+        }
+        .normal{
+            background-color: #FFE695;
+        }
+        .allergy{
+            background-color: #FFAF6A;
+        }
+        .bad{
+            background-color: #FF5757;
+        }
+        .worse{
+            background-color: #9777FF;
+        }
+        .catastrophe{
+            background-color: #AD1774;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <div class="header">
+            <div class="title_country">
+                <h1>空氣品質指標(AQI)</h1>
+                <select name="country" id="country" placeholder='請選擇地區'>
+                    <option value="0">請選擇地區</option>
+                </select>
+            </div>
+            <div class="standard">
+                <table>
+                    <tr>
+                        <td class="well">0~50</td>
+                        <td class="normal">51~100</td>
+                        <td class="allergy">101~150</td>
+                        <td class="bad">151~200</td>
+                        <td class="worse">201~300</td>
+                        <td class="catastrophe">301~400</td>
+                    </tr>
+                    <tr>
+                        <td>良好</td>
+                        <td>普通</td>
+                        <td>對敏感族群不健康</td>
+                        <td>對所有族群不健康</td>
+                        <td>非常不健康</td>
+                        <td>危害</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="county_info">
+            <h1 id='County'></h1>
+            <hr>
+            <span><span id='lastest_time'>2019-11-09 11:00</span> 更新</span>
+        </div>
+        <div class="content">
+            <div class="detail">
+                <table>
+                    <tr>
+                        <th id='SiteName'></th>
+                        <th id='AQI'></th>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <span class="chemistry">臭氧</span>
+                            <span>O<sub>3</sub>(ppb)</span>
+                            <span class="chemistry" id='O3'></span>
+                        </td>
+                    </tr>
+                    <tr class="seperator">
+                        <td colspan="2">
+                            <hr>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <span class="chemistry">懸浮微粒</span>
+                            <span>PM<sub>10</sub>(μg/m³)</span>
+                            <span class="chemistry" id='PM10'></span>
+                        </td>
+                    </tr>
+                    <tr class="seperator">
+                        <td colspan="2">
+                            <hr>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <span class="chemistry">細懸浮微粒</span>
+                            <span>PM<sub>2.5</sub>(μg/m³)</span>
+                            <span class="chemistry" id='PM2.5'></span>
+                        </td>
+                    </tr>
+                    <tr class="seperator">
+                        <td colspan="2">
+                            <hr>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <span class="chemistry">一氧化碳</span>
+                            <span>CO(ppm)</span>
+                            <span class="chemistry" id='CO'></span>
+                        </td>
+                    </tr>
+                    <tr class="seperator">
+                        <td colspan="2">
+                            <hr>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <span class="chemistry">二氧化硫</span>
+                            <span>SO<sub>2</sub>(ppb)</span>
+                            <span class="chemistry" id='SO2'></span>
+                        </td>
+                    </tr>
+                    <tr class="seperator">
+                        <td colspan="2">
+                            <hr>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <span class="chemistry">二氧化氮</span>
+                            <span>NO<sub>2</sub>(ppb)</span>
+                            <span class="chemistry" id='NO2'></span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="list">
+
+            </div>
+        </div>
+        <div class="footer">
+            <span>資料來源：行政院環境保護署</span>
+            <span>Copyright © 2019 Xiang. All rights reserved.</span>
+        </div>
+    </div>
+</body>
+<script>
+    window.aqi_instance = new AqiCenter();
+
+    document.getElementById('country').addEventListener('change', function (e) {
+        if (this.value !== '0') {
+            document.getElementById('country').disabled=true;
+            window.aqi_instance.query_county = this.value;
+            window.aqi_instance.QueryData(function (data) {
+                window.aqi_instance.list_container.innerHTML = '';
+                let data_county = data.filter(d => {
+                    return d['County'] === window.aqi_instance.query_county && d['AQI'];
+                });
+                if (data_county) {
+                    let d=new Date();
+                    let now_time=`${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()} ${d.getHours()}:${d.getMinutes()}`;
+                    document.getElementById('lastest_time').innerText=now_time;
+
+                    let range=null;
+                    for(let prop in data_county[0]){
+                        let dom=document.getElementById(prop);
+                        if(dom){
+                            dom.innerText=data_county[0][prop];
+                        }
+                    }
+                    range=window.aqi_instance.range.filter(r=>{
+                            return data_county[0].AQI>=r.min&&data_county[0].AQI<=r.max;
+                    });
+                    document.getElementById('AQI').className=range[0].name;
+
+                    
+                    window.aqi_instance.data_county = data_county;
+                    window.aqi_instance.data_county.forEach(dc => {
+                        range=window.aqi_instance.range.filter(r=>{
+                            return dc.AQI>=r.min&&dc.AQI<=r.max;
+                        });
+                        let a = document.createElement('a');
+                        a.id=dc.SiteName;
+                        a.onclick=function(e){
+                            e.preventDefault();
+                            window.aqi_instance.ShowDetail(this.id);
+                        }
+                        a.href = '#';
+                        let _html = `<div>${dc.SiteName}</div><div class='${range[0].name}'>${dc.AQI}</div>`;
+                        a.innerHTML = _html;
+                        window.aqi_instance.list_container.appendChild(a);
+                    });
+                }
+                document.getElementById('country').disabled=false;
+            });
+        }
+    });
+
+
+    function AqiCenter() {
+        this.query_county = '';
+        this.cheat_url = 'https://cors-anywhere.herokuapp.com/';
+        this.url = 'http://opendata.epa.gov.tw/webapi/Data/REWIQA/?$orderby=SiteName&$skip=0&$top=1000&format=json';
+        this.open_api = `${this.cheat_url}${this.url}`;
+        this.counties = [];
+        this.list_container = document.getElementsByClassName('list')[0];
+        this.detail_data = null;
+        this.range=[
+            {min:0,max:50,name:'well'},
+            {min:51,max:100,name:'normal'},
+            {min:101,max:150,name:'allergy'},
+            {min:151,max:200,name:'bad'},
+            {min:201,max:300,name:'worse'},
+            {min:301,max:100,name:'catastrophe'},
+        ];
+    }
+
+    AqiCenter.prototype.GetCounties = function (callBack) {
+        document.getElementById('country').disabled=true;
+        fetch(this.open_api)
+            .then(result => {
+                if (result.status) {
+                    return result.json();
+                } else {
+                    console.log('server error');
+                }
+            })
+            .then(json => {
+                let counties =
+                    json.map(j => j.County)
+                        .filter((value, index, self) => {
+                            return self.indexOf(value) === index;
+                        });
+                callBack(counties);
+            })
+            .catch(e => {
+                console.log(e);
+            })
+    }
+
+    AqiCenter.prototype.QueryData = function (callback) {
+        fetch(this.open_api
+        ).then(result => {
+            return result.json();
+        })
+            .then(json => {
+                callback(json);
+            });
+    }
+
+    AqiCenter.prototype.ShowDetail=function(siteName){
+        let data=this.data_county.filter(d=>{
+            return d.SiteName===siteName;
+        });
+        let range=this.range.filter(r=>{
+            return data[0].AQI>=r.min&&data[0].AQI<=r.max;
+        });
+        document.getElementById('AQI').className=range[0].name;
+
+        for(let prop in data[0]){
+            let element=document.getElementById(prop);
+            if(element){
+                element.innerText=data[0][prop];
+            }
+        }
+    }
+
+    window.aqi_instance.GetCounties(function (counties) {
+        this.counties = counties;
+        let select = document.getElementById('country');
+        this.counties.forEach(c => {
+            let option = document.createElement('option');
+            option.value = c;
+            option.innerText = c;
+            select.appendChild(option);
+        });
+        select.value=this.counties[0];
+        select.dispatchEvent(new Event('change'));
+        select.disabled=false;
+    });
+</script>
+
+</html>

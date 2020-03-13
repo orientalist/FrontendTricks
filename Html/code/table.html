@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Table</title>
+    <link href="../code/css/reset.css" rel="stylesheet">
+    <style>
+        .tb {
+            margin: auto;
+            margin-top: 100px;
+        }
+
+        .tb th {
+            background-color: rgb(196, 196, 196);
+        }
+
+        .tb th,
+        .tb td {
+            padding: 20px 50px 20px 50px;
+            border-top: 1px solid rgb(109, 109, 109);
+            border-bottom: 1px solid rgb(109, 109, 109);
+        }
+
+        .tb tr:not(.tr_h):hover {
+            background-color: aquamarine;
+        }
+
+        .tb tr:not(.tr_h){
+            cursor: pointer;
+        }
+
+        .dform{
+            text-align: center;
+            margin: auto;
+            margin-top: 50px;
+        }
+        .dform form select option img{
+            width:100px;
+            height: 100px;
+        }
+    </style>
+</head>
+
+<body>
+    <table class="tb">
+        <tr class="tr_h">
+            <th>標題1</th>
+            <th>標題2</th>
+            <th>標題3</th>
+        </tr>
+        <tr>
+            <td>內容1</td>
+            <td>內容2</td>
+            <td>內容3</td>
+        </tr>
+        <tr>
+            <td>內容4</td>
+            <td>內容5</td>
+            <td>內容6</td>
+        </tr>
+    </table>
+    <div class="dform">
+        <form action="">
+            <select name="imgs" id="imgs">
+                <option value="wiki">
+                    1
+                </option>
+                <option value="wiki2">
+                    2
+                </option>
+                <option value="wik3">
+                    3
+                </option>
+            </select>
+        </form>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Clock</title>
+    <link rel="stylesheet" href="css/reset.css">
+    <style>
+        .body {
+            box-sizing: border-box;
+        }
+
+        .wrap {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #293B29;
+        }
+
+        .clock {
+            width: 500px;
+            height: 500px;
+            background: url(imgs/clock-bg.svg) no-repeat;
+            position: relative;
+        }
+
+        .pointer {
+            position: absolute;
+        }
+
+        #second {
+            height: 244px;
+            width: 13.25px;
+            left: 242.375px;
+            top: 126px;
+            background: url(imgs/second-hand.svg) no-repeat;
+            background-position: 0px 100%;
+            z-index: 1;
+        }
+
+        #minute {
+            height: 184px;
+            width: 8px;
+            top: 158px;
+            left: 246px;
+            background: url(imgs/minute-hand.svg) no-repeat;
+            z-index: 3;
+        }
+
+        #hour {
+            height: 8px;
+            width: 144px;
+            top: 246px;
+            left: 178px;
+            background: url(imgs/hour-hand.svg) no-repeat;
+            background-position: 100% 0px;
+            z-index: 2;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <div class="clock">
+            <!--<div id="center"></div>-->
+            <div class="pointer" id='second'></div>
+            <div class="pointer" id='minute'></div>
+            <div class="pointer" id='hour'></div>
+        </div>
+    </div>
+</body>
+<script>
+    fnTick();
+    function fnTick() {
+        let nd = new Date(new Date().getTime());
+
+        let hour = nd.getHours();
+        hour = hour % 12;
+        let hour_deg = hour * 30;
+
+        let min = nd.getMinutes();
+        let min_deg = min * 6;
+        hour_deg += min * 0.5+90+180;
+
+        let sec = nd.getSeconds();
+        let sec_deg = sec * 6+180;
+
+        document.getElementById('hour').style.transform = `rotate(${hour_deg}deg)`;
+        document.getElementById('minute').style.transform = `rotate(${min_deg}deg)`;
+        document.getElementById('second').style.transform = `rotate(${sec_deg}deg)`;
+
+        setTimeout(() => {
+            fnTick();
+        }, 1000);
+    }
+</script>
+
+</html>

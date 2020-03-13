@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Multiplation Chart</title>
+    <link rel="stylesheet" href="css/reset.css">
+    <style>
+        body {
+            box-sizing: border-box;
+            text-align: center;
+            color: #2EB738;
+            background-color: #F0F0F0;
+            padding: 0rem 10rem 3rem 10rem;
+            position: relative;
+        }
+
+        .wrap {
+            display: table;
+            border-collapse: separate;
+            border-spacing: 2.5rem;
+            width: 100%;
+        }
+
+        .wrap>.row {
+            display: table-row;
+        }
+
+        .wrap>.row>div {
+            width: 33%;
+            display: table-cell;
+        }
+
+        .wrap>.row>div:not(.title) {
+            padding: 2.5rem;
+            background-color: #FFFFFF;
+            border-top-left-radius: 100px;
+            border-bottom-right-radius: 30px;
+        }
+
+        .title {
+            border-top: 1px solid #2EB738;
+            border-bottom: 1px solid #2EB738;
+            vertical-align: middle;
+            position: relative;
+        }
+
+        .title>h1 {
+            font-size: 3rem;
+            line-height: 4rem;
+        }
+
+        .title>h2 {
+            font-size: 1.3rem;
+        }
+
+        .title .decoration {
+            position: absolute;
+            font-size: 1.5rem;
+            width: 1.5rem;
+        }
+
+        .title .decoration:nth-child(1) {
+            left: -30px;
+            top: -15px;
+        }
+
+        .title .decoration:nth-child(2) {
+            right: -30px;
+            top: -15px;
+        }
+
+        .title .decoration:nth-child(5) {
+            left: -30px;
+            bottom: -15px;
+        }
+
+        .title .decoration:nth-child(6) {
+            right: -30px;
+            bottom: -15px;
+        }
+
+        .wrap>.row>div:not(.title)>div {
+            float: left;
+            width: 50%;
+        }
+
+        .wrap>.row>div:not(.title)>div>h2 {
+            font-size: 6rem;
+            text-shadow: 4px 3px 0px #F0F0F0;
+        }
+
+        .wrap>.row>div:not(.title)>div>p {
+            line-height: 2rem;
+            font-size: 1.2rem;
+            float: left;
+            padding-left: 1.3rem;
+        }
+        .footer{
+            width: 100%;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            line-height: 3rem;
+            text-align: right;
+            color: white;
+            background-color: #2EB738;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <div class="row">
+            <div class="title">
+                <div class="decoration">x</div>
+                <div class="decoration">x</div>
+                <h1>九九乘法表</h1>
+                <h2>MULTIPLATION CHART</h2>
+                <div class="decoration">x</div>
+                <div class="decoration">x</div>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        <span>Copyright © 2019 Xiang. All rights reserved.</span>
+    </div>
+</body>
+<script>
+    let wrap = document.getElementsByClassName('wrap')[0];
+    let _row = document.getElementsByClassName('row')[0];
+
+    GenerateElement(2,_row);
+
+    function GenerateElement(index, row) {
+        if (index < 10) {
+            let template = `<div><h2>${index}</h2>`;
+                
+            GenerateMultiplation(index, 1,template,function(temp){
+                template = temp;
+            });
+            let new_dom =document.createElement('div');
+            new_dom.innerHTML=template;
+ 
+            if (row.childElementCount < 3) {
+                row.append(new_dom);
+            } else {
+                row = document.createElement('div');
+                row.className = 'row';
+                wrap.append(row);
+                row.append(new_dom);
+            }
+            index++;
+            GenerateElement(index, row);
+        }
+    }
+
+    function GenerateMultiplation(index, plus, template,callBack) {
+        if (plus < 10) {
+            if (plus === 4) {
+                template += '</div><div>';
+            }
+            template += `<p>${index} x ${plus}= ${index * plus}</p>`;
+            plus++;
+            GenerateMultiplation(index, plus, template,callBack);
+        }
+        else{
+            callBack(template);
+        }
+    }
+</script>
+
+</html>
